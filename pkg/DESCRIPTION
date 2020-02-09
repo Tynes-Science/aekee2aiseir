@@ -1,0 +1,23 @@
+Package: cccyriskreturn
+Title: Crypto-Currency Risk and Returns Validation
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Johannes",
+           family = "Tynes",
+           role = c("aut", "cre"),
+           email = "j0@tynes.science",
+           comment = c(ORCID = "https://orcid.org/0000-0003-2078-0596"))
+Description: Crypto-Currency Risk and Returns Validation
+License: MIT
+Encoding: UTF-8
+LazyData: true
+Depends: magrittr,
+    plyr,
+    dplyr,
+    stringr,
+    tidyr,
+    lubridate,
+    ggplot2,
+    RColorBrewer,
+    ggthemes
+RoxygenNote: 6.1.1
