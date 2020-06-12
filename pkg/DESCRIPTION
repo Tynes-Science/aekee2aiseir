@@ -20,4 +20,4 @@ Depends: magrittr,
     ggplot2,
     RColorBrewer,
     ggthemes
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
