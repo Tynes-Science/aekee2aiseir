@@ -1,5 +1,5 @@
 #' Compute logarithmic returns for a given window width.
-#' @param dat (data frame) daily price data with `date`, `symbol`, `close` columns
+#' @param daily_price_data (data frame) daily price data with `date`, `symbol`, `close` columns
 #' @param window_width (integer) number of periods width of aggregation window
 #' @export
 
@@ -70,6 +70,51 @@ runAllDailyRegressions <- function(returns_data, leads=1:12L) {
   as_tibble
 }
 
+
+#' Generate price plot
+#' @param data (data frame) daily price data with `date`, `symbol`, `open`, `high`, `low`, `close` columns
+#' @param smb_list (character vector) list of symbols for which generate plot
+#' @param start_date (character) start date in format "%Y-%m-%d" for data in plot
+#' @param end_date (character) end date in format "%Y-%m-%d" for data in plot
+#' @param type (character) type of price for plot from: c("open","high","low","close")
+#' @param brk (character) how often show labels on x-axis
+#' @export
+
+priceMovePlot<-function(
+  data, 
+  smb_list, 
+  start_date = "1900-01-01", 
+  end_date = "2900-01-01", 
+  type=c("open","high","low","close"),
+  brk = "2 month"
+)
+{
+  # Check type parameter
+  assert_that(length(type)==1)
+  type <- match.arg(type)  
+  
+  # Check type and convert start & end date to Date format
+  assert_that(is.string(start_date))
+  assert_that(is.string(end_date))
+  start_date = as.Date(start_date)
+  end_date = as.Date(end_date)
+  
+  # Check type and convert start & end date to Date format
+  assert_that(is.string(brk))
+  
+  data %>%
+    # Filter by symbol
+    filter(symbol %in% smb_list) %>%
+    # Filter by start & end date
+    filter(between(date, start_date, end_date)) %>% 
+    # Set x = date and y = open|high|low|close
+    ggplot(., aes(x = date, y = get(type))) + 
+    geom_line() + 
+    # Set breaks, tick labels format, axis labels
+    scale_x_date(breaks = brk, date_labels = "%b %y") + 
+    xlab("") +
+    ylab(paste(type, "price"))
+}
 
 ### N-tile Momentum
 

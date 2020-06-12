@@ -7,9 +7,9 @@
 computeReturns(daily_price_data, window_width = 1L)
 }
 \arguments{
-\item{window_width}{(integer) number of periods width of aggregation window}
+\item{daily_price_data}{(data frame) daily price data with `date`, `symbol`, `close` columns}
 
-\item{dat}{(data frame) daily price data with `date`, `symbol`, `close` columns}
+\item{window_width}{(integer) number of periods width of aggregation window}
 }
 \description{
 Compute logarithmic returns for a given window width.

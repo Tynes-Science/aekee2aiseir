@@ -2,5 +2,6 @@
 
 export(computeReturns)
 export(interpretRegression)
+export(priceMovePlot)
 export(runAllDailyRegressions)
 export(runRegressionLeads)
