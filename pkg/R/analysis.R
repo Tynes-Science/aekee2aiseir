@@ -90,7 +90,7 @@ priceMovePlot<-function(
 )
 {
   # Check type parameter
-  assert_that(length(type)==1)
+  assert_that(length(type)==1, msg = "No type provided or more than one value")
   type <- match.arg(type)  
   
   # Check type and convert start & end date to Date format
@@ -113,7 +113,8 @@ priceMovePlot<-function(
     # Set breaks, tick labels format, axis labels
     scale_x_date(breaks = brk, date_labels = "%b %y") + 
     xlab("") +
-    ylab(paste(type, "price"))
+    ylab(paste(type, "price")) +
+    facet_grid(cols = vars(symbol), scales = "free")
 }
 
 ### N-tile Momentum
