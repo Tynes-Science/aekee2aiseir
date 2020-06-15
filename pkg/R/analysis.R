@@ -72,7 +72,8 @@ runAllDailyRegressions <- function(returns_data, leads=1:12L) {
 
 
 #' Generate price plot
-#' @param data (data frame) daily price data with `date`, `symbol`, `open`, `high`, `low`, `close` columns
+#' @param data (data frame) daily price data with `date`, `symbol`, `open`, `high`,
+#'   `low`, `close` columns
 #' @param smb_list (character vector) list of symbols for which generate plot
 #' @param start_date (character) start date in format "%Y-%m-%d" for data in plot
 #' @param end_date (character) end date in format "%Y-%m-%d" for data in plot
