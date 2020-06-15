@@ -104,18 +104,18 @@ priceMovePlot<-function(
   assert_that(is.string(brk))
 
   data %>%
-    # Filter by symbol
-    filter(symbol %in% smb_list) %>%
-    # Filter by start & end date
-    filter(between(date, start_date, end_date)) %>%
-    # Set x = date and y = open|high|low|close
-    ggplot(., aes(x = date, y = get(type))) +
-    geom_line() +
-    # Set breaks, tick labels format, axis labels
-    scale_x_date(breaks = brk, date_labels = "%b %y") +
-    xlab("") +
-    ylab(paste(type, "price")) +
-    facet_grid(cols = vars(symbol), scales = "free")
+  # Filter by symbol
+  filter(symbol %in% smb_list) %>%
+  # Filter by start & end date
+  filter(between(date, start_date, end_date)) %>%
+  # Set x = date and y = open|high|low|close
+  ggplot(., aes(x = date, y = get(type))) +
+  geom_line() +
+  # Set breaks, tick labels format, axis labels
+  scale_x_date(breaks = brk, date_labels = "%b %y") +
+  xlab("") +
+  ylab(paste(type, "price")) +
+  facet_grid(cols = vars(symbol), scales = "free")
 }
 
 ### N-tile Momentum
