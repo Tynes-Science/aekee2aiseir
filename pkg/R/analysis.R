@@ -74,7 +74,7 @@ runAllDailyRegressions <- function(returns_data, leads=1:12L) {
 #' Generate price plot
 #' @param data (data frame) daily price data with `date`, `symbol`, `open`, `high`,
 #'   `low`, `close` columns
-#' @param smb_list (character vector) list of symbols for which generate plot
+#' @param syms (character vector) the symbols for which generate plot
 #' @param start_date (character) start date in format "%Y-%m-%d" for data in plot
 #' @param end_date (character) end date in format "%Y-%m-%d" for data in plot
 #' @param type (character) type of price for plot from: c("open","high","low","close")
@@ -83,7 +83,7 @@ runAllDailyRegressions <- function(returns_data, leads=1:12L) {
 
 priceMovePlot<-function(
       data,
-      smb_list,
+      syms,
       start_date="1900-01-01",
       end_date="2900-01-01",
       type=c("open","high","low","close"),
@@ -104,7 +104,7 @@ priceMovePlot<-function(
 
   data %>%
   # Filter by symbol
-  filter(symbol %in% smb_list) %>%
+  filter(symbol %in% syms) %>%
   # Filter by start & end date
   filter(between(date, start_date, end_date)) %>%
   # Set x = date and y = open|high|low|close
