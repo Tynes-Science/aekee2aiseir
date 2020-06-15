@@ -82,12 +82,12 @@ runAllDailyRegressions <- function(returns_data, leads=1:12L) {
 #' @export
 
 priceMovePlot<-function(
-  data,
-  smb_list,
-  start_date="1900-01-01",
-  end_date="2900-01-01",
-  type=c("open","high","low","close"),
-  brk="2 month"
+      data,
+      smb_list,
+      start_date="1900-01-01",
+      end_date="2900-01-01",
+      type=c("open","high","low","close"),
+      brk="2 month"
 ) {
   # Check type parameter
   assert_that(length(type)==1, msg = "No type provided or more than one value")
