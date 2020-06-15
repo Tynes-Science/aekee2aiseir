@@ -81,37 +81,37 @@ runAllDailyRegressions <- function(returns_data, leads=1:12L) {
 #' @export
 
 priceMovePlot<-function(
-  data, 
-  smb_list, 
-  start_date = "1900-01-01", 
-  end_date = "2900-01-01", 
+  data,
+  smb_list,
+  start_date = "1900-01-01",
+  end_date = "2900-01-01",
   type=c("open","high","low","close"),
   brk = "2 month"
 )
 {
   # Check type parameter
   assert_that(length(type)==1, msg = "No type provided or more than one value")
-  type <- match.arg(type)  
-  
+  type <- match.arg(type)
+
   # Check type and convert start & end date to Date format
   assert_that(is.string(start_date))
   assert_that(is.string(end_date))
   start_date = as.Date(start_date)
   end_date = as.Date(end_date)
-  
+
   # Check type and convert start & end date to Date format
   assert_that(is.string(brk))
-  
+
   data %>%
     # Filter by symbol
     filter(symbol %in% smb_list) %>%
     # Filter by start & end date
-    filter(between(date, start_date, end_date)) %>% 
+    filter(between(date, start_date, end_date)) %>%
     # Set x = date and y = open|high|low|close
-    ggplot(., aes(x = date, y = get(type))) + 
-    geom_line() + 
+    ggplot(., aes(x = date, y = get(type))) +
+    geom_line() +
     # Set breaks, tick labels format, axis labels
-    scale_x_date(breaks = brk, date_labels = "%b %y") + 
+    scale_x_date(breaks = brk, date_labels = "%b %y") +
     xlab("") +
     ylab(paste(type, "price")) +
     facet_grid(cols = vars(symbol), scales = "free")
