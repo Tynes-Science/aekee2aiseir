@@ -16,8 +16,9 @@ Depends: magrittr,
     dplyr,
     stringr,
     tidyr,
+    assertthat,
     lubridate,
     ggplot2,
     RColorBrewer,
     ggthemes
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
