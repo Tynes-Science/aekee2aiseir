@@ -145,7 +145,7 @@ get_assets_data<-function(assets)
 #' @param assets (character vector) vector of assets
 #' @export
 
-get_metrics<-function(assets)
+get_metrics<-function(assets,granularity="daily")
 {
   
   # Add benchmark
@@ -153,7 +153,9 @@ get_metrics<-function(assets)
   
   # Retrieve data
   data<-get_assets_data(assets)
-  
+  if(granularity=="weekly") data<-to.weekly(data, OHLC=FALSE)
+  if(granularity=="monthly") data<-to.monthly(data, OHLC=FALSE)
+
   # Replace NA
   data<-na.approx(data)
   
@@ -172,11 +174,13 @@ get_metrics<-function(assets)
   
   metrics<-rbind(metrics,SharpeRatio(returns,FUN="StdDev"))
 
-  # Table of drawdowns +++
-  drawdowns<-table.Drawdowns(returns)
+  # # Table of drawdowns +++
+  # drawdowns<-table.Drawdowns(returns)
+  # 
+  # # Return list of results
+  # list(metrics=metrics,drawdowns=drawdowns)
   
-  # Return list of results
-  list(metrics=metrics,drawdowns=drawdowns)
+  metrics
   
 }
 
