@@ -117,6 +117,69 @@ priceMovePlot<-function(
   facet_grid(cols = vars(symbol), scales = "free")
 }
 
+#' Retrieve data for assets from yahoo
+#' @param assets (character vector) vector of assets
+#' @export
+
+get_assets_data<-function(assets)
+{
+  # Create new environment
+  data.env <- new.env()
+  
+  # Go through every asset and try to use getSymbols()
+  l_ply(assets, function(sym) try(getSymbols(sym,env=data.env),silent=T))
+  
+  # Drop tickers for which we can't receive data
+  assetss <- assets[assets %in% ls(data.env)]
+  
+  # Loop and merge good assets
+  data <- xts()
+  for(i in seq_along(assets)) {
+    symbol <- assets[i]
+    data <- merge(data, Ad(get(symbol,envir=data.env)))
+  }
+  data
+}
+
+#' Estimate metrics of assets
+#' @param assets (character vector) vector of assets
+#' @export
+
+get_metrics<-function(assets)
+{
+  
+  # Add benchmark
+  securities <- c(securities)  
+  
+  # Retrieve data
+  data<-get_assets_data(assets)
+  
+  # Replace NA
+  data<-na.approx(data)
+  
+  # Explore data
+  plot.zoo(data)
+  
+  # Calculate return
+  returns<-Return.calculate(data)[-1,]
+  
+  # Compute all of the above at once using table.AnnualizedReturns()
+  metrics<-table.Arbitrary(
+                            R=returns,
+                            metrics = c("mean", "sd","skewness","kurtosis"),
+                            metricsNames = c("Mean", "SD","Skewness", "Kurtosis")
+                          )
+  
+  metrics<-rbind(metrics,SharpeRatio(returns,FUN="StdDev"))
+
+  # Table of drawdowns +++
+  drawdowns<-table.Drawdowns(returns)
+  
+  # Return list of results
+  list(metrics=metrics,drawdowns=drawdowns)
+  
+}
+
 ### N-tile Momentum
 
 ntileMomentum <- function(
