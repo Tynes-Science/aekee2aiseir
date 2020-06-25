@@ -145,11 +145,11 @@ get_assets_data<-function(assets)
 #' @param assets (character vector) vector of assets
 #' @export
 
-get_metrics<-function(assets,granularity="daily")
+get_metrics<-function(assets,granularity="daily", benchmark="SPY")
 {
   
   # Add benchmark
-  securities <- c(securities)  
+  assets <- c(assets,benchmark)  
   
   # Retrieve data
   data<-get_assets_data(assets)
