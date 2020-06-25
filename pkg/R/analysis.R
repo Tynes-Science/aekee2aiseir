@@ -163,7 +163,7 @@ get_metrics<-function(assets,granularity="daily", benchmark="SPY")
   plot.zoo(data)
   
   # Calculate return
-  returns<-Return.calculate(data)[-1,]
+  returns<-Return.calculate(data, method ="log")[-1,]
   
   # Compute all of the above at once using table.AnnualizedReturns()
   metrics<-table.Arbitrary(
