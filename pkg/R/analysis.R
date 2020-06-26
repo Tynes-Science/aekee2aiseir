@@ -159,10 +159,49 @@ filter_min_date<-function(data)
 }
 
 #' Estimate metrics of assets
-#' @param assets (character vector) vector of assets
+#' @param data (xts) price of assets
+#' @param granularity (character vector) granurality of data
 #' @export
 
-get_metrics<-function(assets,granularity="daily", benchmark="SPY")
+get_metrics<-function(data,granularity="daily")
+{
+  if(granularity=="weekly") data<-to.weekly(data, OHLC=FALSE)
+  if(granularity=="monthly") data<-to.monthly(data, OHLC=FALSE)
+  
+  # Calculate return
+  returns<-Return.calculate(data, method ="log")[-1,]
+  
+  # Compute mean/sd/skewness/kurtosis
+  metrics<-table.Arbitrary(
+    R=returns,
+    metrics = c("mean", "sd","skewness","kurtosis"),
+    metricsNames = c("Mean", "SD","Skewness", "Kurtosis")
+  )
+  
+  # Compute sharpe ratio
+  metrics<-rbind(metrics,SharpeRatio(returns,FUN="StdDev"))
+  
+  # Compute % Returns > 0
+  metrics<-rbind(metrics,"% Returns > 0"=apply(returns,2,function(col) {sum(col>0)/length(col)}))
+  
+  metrics<-as.data.frame(t(metrics))
+  
+  # # Table of drawdowns +++
+  # drawdowns<-table.Drawdowns(returns)
+  # 
+  # # Return list of results
+  # list(metrics=metrics,drawdowns=drawdowns)
+  
+  metrics
+
+}
+
+#' Get summary statistics
+#' @param assets (character vector) vector of assets
+#' @param benchmark (character vector) vector of benchmark assets
+#' @export
+
+get_summary_stats<-function(assets, benchmark="SPY")
 {
   
   # Add benchmark
@@ -172,39 +211,15 @@ get_metrics<-function(assets,granularity="daily", benchmark="SPY")
   data<-get_assets_data(assets)
   data<-filter_min_date(data)
   
-  if(granularity=="weekly") data<-to.weekly(data, OHLC=FALSE)
-  if(granularity=="monthly") data<-to.monthly(data, OHLC=FALSE)
-
   # Replace NA
   data<-na.approx(data, na.rm=TRUE)
   # Remove trailing NA
   data<-na.omit(data)
   
-  # Calculate return
-  returns<-Return.calculate(data, method ="log")[-1,]
-  
-  # Compute mean/sd/skewness/kurtosis
-  metrics<-table.Arbitrary(
-                            R=returns,
-                            metrics = c("mean", "sd","skewness","kurtosis"),
-                            metricsNames = c("Mean", "SD","Skewness", "Kurtosis")
-                          )
-  
-  # Compute sharpe ratio
-  metrics<-rbind(metrics,SharpeRatio(returns,FUN="StdDev"))
-  
-  # Compute % Returns > 0
-  metrics<-rbind(metrics,"% Returns > 0"=apply(returns,2,function(col) {sum(col>0)/length(col)}))
-                 
-  metrics<-as.data.frame(t(metrics))
-  # # Table of drawdowns +++
-  # drawdowns<-table.Drawdowns(returns)
-  # 
-  # # Return list of results
-  # list(metrics=metrics,drawdowns=drawdowns)
-  
-  metrics
-  
+  list("Daily" = get_metrics(data,granularity="daily"),
+       "Weekly" = get_metrics(data,granularity="weekly"),
+       "Monthly" = get_metrics(data,granularity="monthly")
+  )
 }
 
 ### N-tile Momentum
