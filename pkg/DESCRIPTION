@@ -20,5 +20,6 @@ Depends: magrittr,
     lubridate,
     ggplot2,
     RColorBrewer,
-    ggthemes
+    ggthemes,
+    PerformanceAnalytics
 RoxygenNote: 7.1.0

@@ -141,6 +141,23 @@ get_assets_data<-function(assets)
   data
 }
 
+#' Find minimum date , presented in all series and filter data
+#' @param data (xts) returns of assets
+#' @export
+filter_min_date<-function(data)
+{
+  
+  res<-do.call(rbind, apply(data, 2, function(col) {
+    max_ind <- which.max(col)
+    min_ind <- which.min(col)
+    data.frame(min_date=as.character(index(data))[min_ind],
+               max_date=as.character(index(data))[max_ind]
+    )
+  }))
+  
+  data[index(data)>=max(res$min_date)]
+}
+
 #' Estimate metrics of assets
 #' @param assets (character vector) vector of assets
 #' @export
@@ -153,27 +170,33 @@ get_metrics<-function(assets,granularity="daily", benchmark="SPY")
   
   # Retrieve data
   data<-get_assets_data(assets)
+  data<-filter_min_date(data)
+  
   if(granularity=="weekly") data<-to.weekly(data, OHLC=FALSE)
   if(granularity=="monthly") data<-to.monthly(data, OHLC=FALSE)
 
   # Replace NA
-  data<-na.approx(data)
-  
-  # Explore data
-  plot.zoo(data)
+  data<-na.approx(data, na.rm=TRUE)
+  # Remove trailing NA
+  data<-na.omit(data)
   
   # Calculate return
   returns<-Return.calculate(data, method ="log")[-1,]
   
-  # Compute all of the above at once using table.AnnualizedReturns()
+  # Compute mean/sd/skewness/kurtosis
   metrics<-table.Arbitrary(
                             R=returns,
                             metrics = c("mean", "sd","skewness","kurtosis"),
                             metricsNames = c("Mean", "SD","Skewness", "Kurtosis")
                           )
   
+  # Compute sharpe ratio
   metrics<-rbind(metrics,SharpeRatio(returns,FUN="StdDev"))
-
+  
+  # Compute % Returns > 0
+  metrics<-rbind(metrics,"% Returns > 0"=apply(returns,2,function(col) {sum(col>0)/length(col)}))
+                 
+  metrics<-as.data.frame(t(metrics))
   # # Table of drawdowns +++
   # drawdowns<-table.Drawdowns(returns)
   # 
